@@ -1,7 +1,7 @@
 FROM node:22-alpine AS builder
 WORKDIR /build
 RUN apk add --no-cache git && \
-git clone https://github.com/Kamidake/kamidake.git . && \
+git clone https://github.com/Viren070/AIOStreams.git . && \
 apk del git
 RUN npm install
 
