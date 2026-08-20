@@ -1,1 +1,1 @@
-FROM savibrabo/nexotv:latest
+FROM ghcr.io/viren070/aiostreams:latest
