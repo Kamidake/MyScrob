@@ -1,4 +1,11 @@
 FROM bellamy/scrob:latest-omnibus
 
-# Replace hardcoded port 7330 with Miget's $PORT (defaults to 5000) in Nginx configs, then run the original entrypoint
-ENTRYPOINT ["/bin/sh", "-c", "find /etc/nginx -type f -exec sed -i \"s/7330/${PORT:-5000}/g\" {} + && exec /entrypoint.sh"]
+# Install socat (Alpine vs Debian/Ubuntu safety check)
+RUN if command -v apk >/dev/null 2>&1; then \
+      apk add --no-cache socat; \
+    else \
+      apt-get update && apt-get install -y --no-install-recommends socat && rm -rf /var/lib/apt/lists/*; \
+    fi
+
+# Forward Miget's assigned $PORT (defaults to 5000) to Scrob's internal port (7330)
+ENTRYPOINT ["/bin/sh", "-c", "socat TCP-LISTEN:${PORT:-5000},fork,reuseaddr TCP:127.0.0.1:7330 & exec /entrypoint.sh"]
